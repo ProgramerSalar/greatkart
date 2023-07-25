@@ -39,6 +39,8 @@
                     <i class="fa fa-bars"></i> All category 
                 </button>
                 <div class="dropdown-menu">
+                    <li><a href="{% url 'store' %}"> All Products</a></li>
+
                 {% for category in links %}
 
                     <a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }} </a>
