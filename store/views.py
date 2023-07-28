@@ -4,7 +4,7 @@ from .models import Product
 from category.models import Category
 from carts.models import Cart,CartItem
 from carts.views import _cart_id
-
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 
 
@@ -22,16 +22,24 @@ def store(request,category_slug=None):
         categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
         product_count = products.count()
+        paginator = Paginator(products,3)  # one page have 6 products
+        page = request.GET.get('page')   # in the url ,when you are go to the next page , the url is change that is page-2,page-3 like this 
+        paged_products = paginator.get_page(page) 
 
     else:
-        products = Product.objects.all().filter(is_available=True)
+        products = Product.objects.all().filter(is_available=True).order_by('id')
         product_count = products.count()
+        paginator = Paginator(products,3)  # one page have 6 products
+        page = request.GET.get('page')   # in the url ,when you are go to the next page , the url is change that is page-2,page-3 like this 
+        paged_products = paginator.get_page(page)   # page and paginator are conclude to one veriable that is paged_products 
+
 
 
 
     context = {
-        'products':products,
+        'products':paged_products,
         'product_count':product_count,
+
     }
     return render(request, 'store/store.html',context)
 
