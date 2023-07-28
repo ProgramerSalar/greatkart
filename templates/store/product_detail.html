@@ -13,6 +13,7 @@
     <div class="card">
         <div class="row no-gutters">
             <aside class="col-md-6">
+              <form action="{% url 'add_cart'  single_product.id %}" method="GET">
     <article class="gallery-wrap"> 
         <div class="img-big-wrap">
            <a href="#"><img src="{{ single_product.images.url  }}"></a>
@@ -35,21 +36,25 @@
     <hr>
         <div class="row">
             <div class="item-option-select">
-                <h6>Choose Color</h6>
-                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color"> Silver
-                  </label>
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color" > Gray
-                  </label>
-                  <label class="btn btn-light active">
-                    <input type="radio" name="radio_color checked"> Gold
-                  </label>
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color"> Black
-                  </label>
-                </div> 
+                <h6>Choose Color</h6>    
+                <select name="color">
+                  <option value="red">RED</option>
+                  <option value="yellow">YELLOW</option>
+                  <option value="green">GREEN</option>
+                </select>
+            </div>
+        </div> <!-- row.// -->
+
+
+
+        <div class="row">
+            <div class="item-option-select">
+                <h6>Select Size</h6>
+                <select name="size">
+                  <option value="small">SMALL</option>
+                  <option value="medium">MEDIUM</option>
+                  <option value="large">LARGE</option>
+                </select>
             </div>
         </div> <!-- row.// -->
         <div class="row">
@@ -82,7 +87,7 @@
           <a href="{% url 'cart' %}" class="btn  btn-primary"> <span class="text">View cart</span> <i class="fas fa-eye"></i>  </a>
 
           {% else %}
-        <a href="{% url 'add_cart'  single_product.id %}" class="btn  btn-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>  </a>
+        <button type="submit" class="btn  btn-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>  </button>
           {% endif %}
         {% endif %}
     </article> <!-- product-info-aside .// -->
@@ -118,6 +123,7 @@
                 </p>	
             </div>
         </article>
+      </form>
     
         
     
