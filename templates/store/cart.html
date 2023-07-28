@@ -11,6 +11,18 @@
     
     <!-- ============================ COMPONENT 1 ================================= -->
     
+
+{% if not cart_items %}
+{% comment %} messages  {% endcomment %}
+<h2>Your Shopping Cart is Empty</h2>
+<br>
+<div class="text-center">
+    <a href="{% url 'store' %}" class="btn btn-primary">Countinoue Shopping<a>
+</div>
+
+
+
+{% else %}
     <div class="row">
         <aside class="col-lg-9">
     <div class="card">
@@ -42,7 +54,7 @@
                         <div class="col"> 
                             <div class="input-group input-spinner">
                                 <div class="input-group-prepend">
-                                <button class="btn btn-light" type="button" id="button-plus"> <i class="fa fa-minus"></i> </button>
+                                <a href="{% url 'remove_cart' cart_item.product.id %}" class="btn btn-light" type="button" id="button-plus"> <i class="fa fa-minus"></i> </a>
                                 </div>
                                 <input type="text" class="form-control"  value="{{ cart_item.quantity }}">
                                 <div class="input-group-append">
@@ -51,6 +63,7 @@
                             </div> <!-- input-group.// -->
                         </div> <!-- col.// -->
         </td>
+ 
         <td> 
             <div class="price-wrap"> 
                 <var class="price">${{ cart_item.sub_total }}.00</var> 
@@ -58,10 +71,10 @@
             </div> <!-- price-wrap .// -->
         </td>
         <td class="text-right"> 
-            <a href="" class="btn btn-danger"> Remove</a>
+            <a href="{% url 'remove_cart_item' cart_item.product.id %}" class="btn btn-danger"> Remove</a>
         </td>
     </tr>
-    {% endfor %}
+    {% endfor  %}
 
 
 
@@ -81,11 +94,11 @@
                 </dl>
                 <dl class="dlist-align">
                   <dt>Tax:</dt>
-                  <dd class="text-right"> $10.00</dd>
+                  <dd class="text-right"> ${{tax}}.00</dd>
                 </dl>
                 <dl class="dlist-align">
                   <dt>Total:</dt>
-                  <dd class="text-right text-dark b"><strong>$59.97</strong></dd>
+                  <dd class="text-right text-dark b"><strong>${{grand_total}}.97</strong></dd>
                 </dl>
                 <hr>
                 <p class="text-center mb-3">
@@ -101,6 +114,7 @@
     
     </div> <!-- row.// -->
     <!-- ============================ COMPONENT 1 END .// ================================= -->
+    {% endif %}
     
     </div> <!-- container .//  -->
     </section>
