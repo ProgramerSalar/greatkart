@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from store.models import Product
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist  
-
+from store.models import Variation, VariationManager
 
 
 
@@ -26,11 +26,23 @@ def _cart_id(request):
 
 
 def add_cart(request, product_id):
-    color = request.GET['color']
-    size = request.GET['size']
-    return HttpResponse(color + ' ' + size)
-    exit()
     product  = Product.objects.get(id=product_id)   # get the product 
+    product_variation = []
+    if request.method == 'POST':
+        for item in request.POST:
+            key = item
+            value = request.POST[key]
+            # print(key, value)
+            try:
+                variation = Variation.objects.get(product=product,variation_category__iexact=key, variation_value__iexact=value)
+                product_variation.append(variation)
+                
+            except:
+                pass
+
+
+
+
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request))
 

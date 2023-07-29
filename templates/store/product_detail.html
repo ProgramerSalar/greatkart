@@ -13,7 +13,8 @@
     <div class="card">
         <div class="row no-gutters">
             <aside class="col-md-6">
-              <form action="{% url 'add_cart'  single_product.id %}" method="GET">
+              <form action="{% url 'add_cart'  single_product.id %}" method="POST">
+            {% csrf_token %}
     <article class="gallery-wrap"> 
         <div class="img-big-wrap">
            <a href="#"><img src="{{ single_product.images.url  }}"></a>
@@ -37,10 +38,12 @@
         <div class="row">
             <div class="item-option-select">
                 <h6>Choose Color</h6>    
-                <select name="color">
-                  <option value="red">RED</option>
-                  <option value="yellow">YELLOW</option>
-                  <option value="green">GREEN</option>
+                <select name="color" class="form-control" required>
+                  <option value="" disabled selected>select color</option>
+                  {% for i in single_product.variation_set.colors %}
+                  <option value="{{ i.variation_value | lower }}">{{ i.variation_value  | capfirst }}</option>
+                  {% endfor %}
+                  
                 </select>
             </div>
         </div> <!-- row.// -->
@@ -50,32 +53,16 @@
         <div class="row">
             <div class="item-option-select">
                 <h6>Select Size</h6>
-                <select name="size">
-                  <option value="small">SMALL</option>
-                  <option value="medium">MEDIUM</option>
-                  <option value="large">LARGE</option>
+                <select name="size" class="form-control" required>
+                  <option value="" disabled selected>select size</option>
+                  {% for i in single_product.variation_set.sizes %}
+                  <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                  {% endfor %}
+                  
                 </select>
             </div>
         </div> <!-- row.// -->
-        <div class="row">
-            <div class="item-option-select">
-                <h6>Select Size</h6>
-                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color"> S
-                  </label>
-                  <label class="btn btn-light active">
-                    <input type="radio" name="radio_color" checked> M
-                  </label>
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color"> L
-                  </label>
-                  <label class="btn btn-light">
-                    <input type="radio" name="radio_color"> XL
-                  </label>
-                </div> 
-            </div>
-        </div> <!-- row.// -->
+        
         <hr>
         {% if single_product.stock <= 0 %}
         <h5>Out of Stock </h5>
