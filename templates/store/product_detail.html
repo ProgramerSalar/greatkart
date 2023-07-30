@@ -68,14 +68,14 @@
         <h5>Out of Stock </h5>
         {% else %}
 
-          {% if in_cart %}
+          {% comment %} {% if in_cart %} {% endcomment %}
             {% comment %} added to cart {% endcomment %}
-          <a href="#" class="btn  btn-primary"> <span class="text">Added to cart</span> <i class="fas fa-check"></i>  </a>
-          <a href="{% url 'cart' %}" class="btn  btn-primary"> <span class="text">View cart</span> <i class="fas fa-eye"></i>  </a>
+          {% comment %} <a href="#" class="btn  btn-primary"> <span class="text">Added to cart</span> <i class="fas fa-check"></i>  </a> {% endcomment %}
+          {% comment %} <a href="{% url 'cart' %}" class="btn  btn-primary"> <span class="text">View cart</span> <i class="fas fa-eye"></i>  </a> {% endcomment %}
 
-          {% else %}
+          {% comment %} {% else %} {% endcomment %}
         <button type="submit" class="btn  btn-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>  </button>
-          {% endif %}
+          {% comment %} {% endif %} {% endcomment %}
         {% endif %}
     </article> <!-- product-info-aside .// -->
             </main> <!-- col.// -->

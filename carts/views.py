@@ -55,6 +55,10 @@ def add_cart(request, product_id):
 
     try:
         cart_item = CartItem.objects.get(product=product, cart=cart)
+        if len(product_variation) > 0:  # product varation is greter then 0 
+            cart_item.variations.clear()  # first of all clear the variation and then add the variations 
+            for item in product_variation:
+                cart_item.variations.add(item)  # add the cart_item in variation 
         cart_item.quantity += 1 
         cart_item.save()
 
@@ -64,6 +68,10 @@ def add_cart(request, product_id):
             quantity=1,
             cart=cart,
         )
+        if len(product_variation) > 0:  # product varation is greter then 0 
+            cart_item.variations.clear()  # first of all clear the variation and then add the variations
+            for item in product_variation:
+                cart_item.variations.add(item)  # add the cart_item in variation 
         cart_item.save()
     # return HttpResponse(cart_item.product)
     # exit()
