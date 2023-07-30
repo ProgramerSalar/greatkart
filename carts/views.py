@@ -52,17 +52,43 @@ def add_cart(request, product_id):
         )
         cart.save()
 
+    is_cart_item_exists = CartItem.objects.filter(product=product, cart=cart).exists()  # check the product is exists or not
+    if is_cart_item_exists:
+        cart_item = CartItem.objects.filter(product=product, cart=cart)  # exists in the cart the filter the product = product 
+        # existing varations -> database
+        # current varation -> product varation 
+        # item_id -> database
+        existing_varation_list = [] # product is append in the list 
+        id = []  # create the empty list id -> 2
+        for item in cart_item:
+            existing_varation = item.variations.all()   # all product varations are show 
+            existing_varation_list.append(list(existing_varation))   # varations are append in the list of existing_varation_list 
+            id.append(item.id) # append the item in id -> 2 
 
-    try:
-        cart_item = CartItem.objects.get(product=product, cart=cart)
-        if len(product_variation) > 0:  # product varation is greter then 0 
-            cart_item.variations.clear()  # first of all clear the variation and then add the variations 
-            for item in product_variation:
-                cart_item.variations.add(item)  # add the cart_item in variation 
-        cart_item.quantity += 1 
-        cart_item.save()
+        print(existing_varation_list)  # print the existing varation  list 
 
-    except CartItem.DoesNotExist:
+        if product_variation in existing_varation_list:
+            # return HttpResponse('true')
+            # increase the cart item quantity
+            index = existing_varation_list.index(product_variation)  # in the exiting varation list of item of index is equal to the product_varation -> 2
+            item_id = id[index]  # concatenate to the item id in the index -> 2
+            item = CartItem.objects.get(product=product, id=item_id)  # fetch the Cartitem using product is equal to product and product id is equal to product id   -> 2
+            item.quantity += 1 
+            item.save()
+
+        
+        else:
+            # return HttpResponse('False')
+            # create a new cart item 
+            item = CartItem.objects.create(product=product, quantity=1, cart=cart)  # show the product of CartItem -> 2
+            # -> 2 
+            if len(product_variation) > 0:  # product varation is greter then 0 
+                item.variations.clear()  # first of all clear the variation and then add the variations 
+                item.variations.add(*product_variation)  # add the item in variation 
+            item.save()
+
+    else:
+        
         cart_item = CartItem.objects.create(
             product=product,
             quantity=1,
@@ -70,8 +96,7 @@ def add_cart(request, product_id):
         )
         if len(product_variation) > 0:  # product varation is greter then 0 
             cart_item.variations.clear()  # first of all clear the variation and then add the variations
-            for item in product_variation:
-                cart_item.variations.add(item)  # add the cart_item in variation 
+            cart_item.variations.add(*product_variation)  # add the cart_item in variation 
         cart_item.save()
     # return HttpResponse(cart_item.product)
     # exit()
