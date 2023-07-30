@@ -94,6 +94,7 @@ def add_cart(request, product_id):
             quantity=1,
             cart=cart,
         )
+        # -> 2
         if len(product_variation) > 0:  # product varation is greter then 0 
             cart_item.variations.clear()  # first of all clear the variation and then add the variations
             cart_item.variations.add(*product_variation)  # add the cart_item in variation 
@@ -104,23 +105,27 @@ def add_cart(request, product_id):
     return redirect('cart')
 
 
-def remove_cart(request, product_id):
+def remove_cart(request, product_id, cart_item_id):
     cart = Cart.objects.get(cart_id = _cart_id(request))
     product = get_object_or_404(Product, id=product_id)
-    cart_item = CartItem.objects.get(product=product, cart=cart)
-    if cart_item.quantity > 1:
-        cart_item.quantity -= 1 
-        cart_item.save()
+    try:
 
-    else:
-        cart_item.delete()
+        cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1 
+            cart_item.save()
+
+        else:
+            cart_item.delete()
+    except:
+        pass
 
     return redirect('cart')
 
-def remove_cart_item(request,product_id):
+def remove_cart_item(request,product_id, cart_item_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))
     product = get_object_or_404(Product, id=product_id)
-    cart_item = CartItem.objects.get(product=product, cart=cart)
+    cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
     cart_item.delete()
     return redirect('cart')
 
