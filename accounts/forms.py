@@ -1,7 +1,7 @@
 from django import forms 
 from .models import Account
 
-class RegisterationForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder':'password',
         'class':'form-control',
@@ -17,7 +17,20 @@ class RegisterationForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        fields = ['first_name','last_name', 'phone_number','email','password','confirm_password']
+        fields = ['first_name','last_name', 'phone_number','email','password']
+
+
+
+    def clean(self):
+        clean_data = super(RegistrationForm, self).clean()
+        password = clean_data.get('password')
+        confirm_password = clean_data.get('confirm_password')
+
+        if password != confirm_password:
+            raise forms.ValidationError(
+                'Password does not match!'
+            )
+
 
 
 
@@ -25,7 +38,7 @@ class RegisterationForm(forms.ModelForm):
 
 
     def __init__(self, *args, **kwargs):
-        super(RegisterationForm, self).__init__(*args, **kwargs)
+        super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs['placeholder'] = 'Enter First Name'
         self.fields['last_name'].widget.attrs['placeholder'] = 'Enter Last Name'
         self.fields['email'].widget.attrs['placeholder'] = 'Enter Email'
@@ -33,6 +46,8 @@ class RegisterationForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
+
+    
 
 
     
