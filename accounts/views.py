@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import RegisterationForm
+from .forms import RegistrationForm
 from .models import Account
+from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 
 def register(request):
     if request.method == 'POST':
-        form = RegisterationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -23,10 +26,12 @@ def register(request):
                                                password=password)
             user.phone_number = phone_number
             user.save()
+            messages.success(request, 'Registration Succesful')
+            return redirect('register')
 
         
     else:
-        form = RegisterationForm()
+        form = RegistrationForm()
 
 
     context = {
@@ -39,8 +44,26 @@ def register(request):
 
 
 def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+
+        user = auth.authenticate(email=email,
+                                 password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, 'You are Now Logged in.')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid Login crediential')
+            return redirect('login')
     return render(request, 'accounts/login.html')
 
 
+
+@login_required(login_url='login')
 def logout(request):
+    auth.logout(request)
+    messages.success(request, 'You are logged out.')
+    return redirect('login')
     return HttpResponse('logout')

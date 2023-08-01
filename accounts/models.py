@@ -17,7 +17,6 @@ class MyAccountManager(BaseUserManager):
             last_name=last_name,
 
         )
-
         user.set_password(password)
         user.save(using=self._db)
         return user 
@@ -30,7 +29,6 @@ class MyAccountManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
         )
-
         user.is_admin=True 
         user.is_active=True
         user.is_staff=True 
@@ -51,10 +49,10 @@ class Account(AbstractBaseUser):
     # requries 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
-    is_admin = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
-    is_active = models.BooleanField(default=True)
-    is_superadmin = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    is_superadmin = models.BooleanField(default=False)
     
 
     USERNAME_FIELD = 'email'
