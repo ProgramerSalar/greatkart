@@ -2,19 +2,19 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import RegistrationForm
 from .models import Account
-from django.contrib import messages, auth
-from django.contrib.auth.decorators import login_required
+# Create your views here.
 
-# user activation import 
+
+# verification the email 
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode , urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
-
-
-# Create your views here.
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages , auth
+from django.contrib.auth.decorators import login_required
 
 
 def register(request):
@@ -35,6 +35,8 @@ def register(request):
                                                password=password)
             user.phone_number = phone_number
             user.save()
+            messages.success(request, 'Registration Succesful')
+            return redirect('register')
 
             # user activation 
             current_site = get_current_site(request)
@@ -69,19 +71,6 @@ def register(request):
 
 
 def login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-
-        user = auth.authenticate(email=email,
-                                 password=password)
-        if user is not None:
-            auth.login(request, user)
-            messages.success(request, 'You are Now Logged in.')
-            return redirect('home')
-        else:
-            messages.error(request, 'Invalid Login crediential')
-            return redirect('dashboard')
     return render(request, 'accounts/login.html')
 
 
