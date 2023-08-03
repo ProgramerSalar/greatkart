@@ -4,6 +4,8 @@ from store.models import Product
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist  
 from store.models import Variation, VariationManager
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -161,7 +163,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
 
 
-
+@login_required(login_url='login')
 def checkout(request, total=0, quantity=0, cart_items=None):
     tax = 0
     grand_total = 0
