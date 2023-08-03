@@ -86,9 +86,47 @@ def login(request):
                 is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()  # check the product is exists or not
                 if is_cart_item_exists:
                     cart_item = CartItem.objects.filter(cart=cart)
+
+                    # getting the product variation by cart id 
+                    product_variation = []
                     for item in cart_item:
-                        item.user = user 
-                        item.save()
+                        variation = item.variations.all()
+                        product_variation.append(list(variation))
+
+                    # get the cart items form the user access his product variation 
+                    cart_item = CartItem.objects.filter(user=user)
+                    existing_varation_list = [] # product is append in the list 
+                    id = []  # create the empty list id -> 2
+                    for item in cart_item:
+                        existing_varation = item.variations.all()   # all product varations are show 
+                        existing_varation_list.append(list(existing_varation))   # varations are append in the list of existing_varation_list 
+                        id.append(item.id) # append the item in id -> 2 
+
+
+                    # product_variation = [1,3,5,4]
+                    # existing_varation_list = [3, 4, 5, 6, 7]  # when any item are commin list 1 , this comman items are added 
+                    for pr in product_variation:
+                        if pr in existing_varation_list:
+                            index = existing_varation_list.index(pr)  # comman item in product_variation and existing_variation_list 
+                            item_id = id[index]  # comman item id is store in item_id 
+                            item = CartItem.objects.get(id=item_id)  # push the common item in cartitem 
+                            item.quantity += 1  # add the common item 
+                            item.user = user   # item is assign the  user 
+                            item.save()  
+
+                        else:
+                            # when item is not common, add item in the cart 
+                            cart_item = CartItem.objects.filter(cart=cart)  # filter the item in the cart 
+                            for item in cart_item:  
+                                item.user = user    # assign the user 
+                                item.save()
+
+
+
+
+
+
+                    
 
             except:
                 pass
