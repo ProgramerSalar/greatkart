@@ -20,6 +20,9 @@ from django.contrib.auth.decorators import login_required
 from carts.models import Cart,CartItem
 from carts.views import _cart_id
 
+
+import requests
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -132,7 +135,23 @@ def login(request):
                 pass
             auth.login(request, user)
             messages.success(request, 'You are now logged in.')
-            return redirect('dashboard')
+
+
+            # redirect the page of depend on user which is check 
+            url = request.META.get('HTTP_REFERER')
+            try:
+                query = requests.utils.urlparse(url).query   # which point you clicked to login for example of when you have checkout page and then checkout click and go to login page (this code is show the next=/cart/checkout/ ) this things
+                # print('query -> ', query)
+                # next=/cart/checkout/
+                params = dict(x.split('=') for x in query.split('&'))  # and then you have next=/cart/checkout/ this things (you are split to in the dictionary next is the key and /cart/checkout/ is value)
+                # print('params -> ', params)
+                if 'next' in params:
+                    nextPage = params['next']  # when you are logged in you go the next page,  and next is /cart/checkout/ this url 
+                    return redirect(nextPage)  # you go to the next page url 
+                
+            except:
+                return redirect('dashboard')
+                
         else:
             messages.error(request, 'Invalid login credentials')
             return redirect('login')
