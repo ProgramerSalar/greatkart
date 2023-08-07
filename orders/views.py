@@ -107,11 +107,11 @@ def payments(request):
 
 
     # send order number and transation id back to send data method via json response 
-    # data = {
-    #     'order_number':order.order_number,
-    #     'transID': payment.payment_id,
-    # }
-    # return JsonResponse(data)
+    data = {
+        'order_number':order.order_number,
+        'transID': payment.payment_id,
+    }
+    return JsonResponse(data)
 
 
 
