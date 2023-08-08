@@ -47,6 +47,13 @@ def register(request):
             # messages.success(request, 'Registration Succesful')
             # return redirect('register')
 
+
+            # create User profile 
+            profile = Userprofile()
+            profile.user_id = user.id 
+            profile.profile_picture = 'default/default-user.jpeg'
+            profile.save()
+
             # user activation 
             current_site = get_current_site(request)
             mail_subject="Please activate you account"
@@ -196,8 +203,10 @@ def activate(request, uidb64, token):
 def dashboard(request):
     orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
     orders_count = orders.count()
+    userprofile = Userprofile.objects.get(user_id=request.user.id)
     context = {
         'orders_count':orders_count,
+        'userprofile':userprofile,
     }
     return render(request, 'accounts/dashboard.html',context)
 
@@ -253,7 +262,7 @@ def resetPassword_validate(request, uidb64, token):
         return redirect('login')
 
     
-  
+
 def resetPassword(request):
     if request.method == 'POST':
         password = request.POST['password']
@@ -276,7 +285,7 @@ def resetPassword(request):
     
 
 
-
+@login_required(login_url='login')
 def my_orders(request):
     orders = Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')   # filter the order in increasing oder ('-' means, '-created_at')
     context = {
@@ -288,7 +297,7 @@ def my_orders(request):
 
 
 
-
+@login_required(login_url='login')
 def edit_profile(request):
     userprofile = get_object_or_404(Userprofile, user=request.user)
     if request.method == "POST":
@@ -320,15 +329,58 @@ def edit_profile(request):
 
 
 
+@login_required(login_url='login')
+def changePassword(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+
+        user = Account.objects.get(username__exact=request.user.username)  # exact the user 
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)   # check the password 
+            if success:
+                user.set_password(new_password)
+                user.save()
+                # auth.logout(request)
+                messages.success(request, "Password updated successfully.")
+                return redirect('changePassword')
+            
+            else:
+                messages.error(request, 'Please Enter Valid current Password')
+                return redirect('changePassword')
+            
+        else:
+            messages.error(request, 'Password Does Not match!')
+            return redirect('changePassword')
+
+
+
+
+    return render(request, 'accounts/changePassword.html')
 
 
 
 
 
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
 
 
+    context = {
+        'order_detail':order_detail,
+        'order':order,
+        'subtotal':subtotal,
+    }
 
-
+    return render(request, 'accounts/order_detail.html',context)
 
 
 
