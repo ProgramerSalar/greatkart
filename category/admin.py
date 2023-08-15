@@ -3,6 +3,7 @@ from .models import Category
 
 # Register your models here.
 class CategoryAdmin(admin.ModelAdmin):
+    # prepopulated slug fileds
     prepopulated_fields = {
         'slug':('category_name',)
     }
